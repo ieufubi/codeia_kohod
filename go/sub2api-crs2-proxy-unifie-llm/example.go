@@ -2,48 +2,42 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 )
 
-// Un exemple minimaliste de Sub2API-CRS2 standalone
+// Ce code illustre un proxy minimaliste pour Sub2API-CRS2
+// Il redirige les requêtes vers OpenAI en modifiant le header Host
+
 func main() {
-	// Target: On simule un endpoint OpenAI
-	target, err := url.Parse("https://api.openai.com")
+	// URL de l'upstream (ex: OpenAI)
+	target := "https://api.openai.com"
+	targetURL, err := url.Parse(target)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
-	proxy := httputil.NewSingleHostReverseProxy(target)
+	proxy := httputil.NewSingleHostReverseProxy(targetURL)
 
-	// Middleware de transformation
-	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Printf("Request: %s %s\n", r.Method, r.URL.Path)
-		
-		// Simulation de réécriture de header pour Sub2API-CRS2
-		if r.Header.Get("Authorization") == "" {
-			http.Error(w, "Missing Sub2API-CRS2 Key", http.StatusUnauthorized)
-			return
-		}
+	// Configuration du Director pour la réécriture de l'Host
+	originalDirector := proxy.Director
+	proxy.Director = func(r *http.Request) {
+		originalDirector(r)
+		r.Header.Set("X-Proxy-By", "Sub2API-CRS2-Demo")
+		r.Host = targetURL.Host // Crucial pour ne pas être rejeté par le fournisseur
+	}
 
-		// On injecte la vraie clé avant de transmettre
-		r.Header.Set("Authorization", "Bearer sk-real-key-123")
-
+	http.HandleFunc("/v1/chat/completions", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Printf("Requête reçue pour le modèle: %s\n", r.URL.Path)
 		proxy.ServeHTTP(w, r)
 	})
 
-	server := &http.Server{
-		Addr:    ":8080",
-		Handler: handler,
-	}
+	fmt.Println("Serveur Sub2API-CRS2 de test démarré sur :8080")
+	fmt.Printf("Redirection vers : %s\n", target)
 
-	fmt.Println("Sub2API-CRS2 Proxy running on :8080")
-	if err := server.ListenAndServe(); err != nil {
-		log.Fatal(err)
+	err = http.ListenAndServe(":8080", nil)
+	if err != nil {
+		panic(err)
 	}
-
 }
-// Note: Ce code nécessite une clé API valide pour fonctionner réellement avec OpenAI.
