@@ -1,7 +1,7 @@
-# Extraction données navigateur : Benchmark GitHub Actions
+# Extraction données navigateur : Automatiser le décryptage via GitHub Actions
 
 Exemple de code Perl issu de l'article :
-**[Extraction données navigateur : Benchmark GitHub Actions](https://perlia.kohod.fr/2026/05/11/extraction-donnees-navigateur-github-actions/)**
+**[Extraction données navigateur : Automatiser le décryptage via GitHub Actions](https://perlia.kohod.fr/2026/05/11/extraction-donnees-navigateur-github-actions-2/)**
 
 ## Thème
 github actions : Extract and decrypt browser data, supporting multiple data types, runnable on va
