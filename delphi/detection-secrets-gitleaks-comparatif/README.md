@@ -1,0 +1,18 @@
+# Détection de secrets : 3x ui avec Gitleaks
+
+Exemple de code Delphi issu de l'article :
+**[Détection de secrets : 3x ui avec Gitleaks](https://delphia.kohod.fr/2026/05/12/detection-secrets-gitleaks-comparatif/)**
+
+## Thème
+3x ui : Find secrets with Gitleaks 🔑
+
+## Prérequis
+Voir l'article complet pour les instructions d'installation.
+
+## Usage
+```delphi
+# voir example.pas
+```
+
+---
+*Généré automatiquement depuis [codeia](https://github.com/ieufubi/codeia_kohod)*
